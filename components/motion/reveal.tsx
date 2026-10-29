@@ -1,28 +1,52 @@
 "use client";
 
-import { motion, type MotionProps } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
+type RevealState = "visible" | "pending" | "shown";
+
+// Content is rendered visible on the server and only hidden after mount when it is
+// still below the fold, so the page never stays blank (no JS, reduced motion, crawlers).
 export function Reveal({
   className,
   children,
   delay = 0,
-  ...props
-}: MotionProps & { className?: string; children: React.ReactNode; delay?: number }) {
-  const reduced = useReducedMotion();
+}: {
+  className?: string;
+  children: React.ReactNode;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState<RevealState>("visible");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+
+    setState("pending");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setState("shown");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <motion.div
-      initial={reduced ? false : { opacity: 0, y: 14, filter: "blur(6px)" }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={reduced ? undefined : { duration: 0.55, ease: "easeOut", delay }}
-      className={cn(className)}
-      {...props}
+    <div
+      ref={ref}
+      data-reveal={state}
+      style={{ "--reveal-delay": `${delay}s` } as React.CSSProperties}
+      className={cn("reveal", className)}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
-

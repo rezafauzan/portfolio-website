@@ -8,7 +8,7 @@ import { useActiveSection } from "@/hooks/use-active-section";
 
 export type NavItem = { id: string; label: string };
 
-export function Navbar({ items }: { items: NavItem[] }) {
+export function Navbar({ brand, items }: { brand: string; items: NavItem[] }) {
   const ids = useMemo(() => items.map((i) => i.id), [items]);
   const active = useActiveSection(ids);
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ export function Navbar({ items }: { items: NavItem[] }) {
           className="group inline-flex items-center gap-2 font-semibold tracking-tight text-white"
         >
           <span className="relative">
-            <span className="text-gradient">Portfolio</span>
+            <span className="text-gradient">{brand}</span>
             <span className="absolute -inset-x-2 -inset-y-3 -z-10 rounded-xl bg-cyan-300/10 opacity-0 blur-lg transition group-hover:opacity-100" />
           </span>
         </Link>
