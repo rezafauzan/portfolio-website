@@ -13,6 +13,7 @@ import {
 import { portfolio } from "@/data/portfolio";
 import { Navbar } from "@/components/navbar";
 import { ContactForm } from "@/components/contact-form";
+import { TechBadge } from "@/components/tech-badge";
 import { Reveal } from "@/components/motion/reveal";
 import { Section } from "@/components/ui/section";
 import { Container } from "@/components/ui/container";
@@ -182,7 +183,7 @@ export default function Home() {
                   <p className="text-sm font-semibold text-white">{group.group}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {group.items.map((s) => (
-                      <Badge key={s}>{s}</Badge>
+                      <TechBadge key={s} name={s} />
                     ))}
                   </div>
                 </Card>
@@ -238,9 +239,7 @@ export default function Home() {
                           </ul>
                           <div className="mt-3 flex flex-wrap gap-1.5">
                             {proj.tech.map((t) => (
-                              <Badge key={t} className="px-2.5 py-0.5 text-[11px] text-white/60">
-                                {t}
-                              </Badge>
+                              <TechBadge key={t} name={t} className="px-2.5 py-0.5 text-[11px] text-white/60" />
                             ))}
                           </div>
                         </div>
@@ -288,7 +287,7 @@ export default function Home() {
                     <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-5">
                       <div className="flex flex-wrap gap-2">
                         {p.tech.map((t) => (
-                          <Badge key={t}>{t}</Badge>
+                          <TechBadge key={t} name={t} />
                         ))}
                       </div>
                       {p.links?.demo || p.links?.github ? (
